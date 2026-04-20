@@ -394,6 +394,25 @@ void handle_SC_GetPid() {
     return move_program_counter();
 }
 
+void handle_SC_Pipe() {
+    int virtAddr = kernel->machine->ReadRegister(4);  // user pointer to int[2]
+
+    int fd[2];
+    int result = SysPipe(fd);
+
+    if (result == -1) {
+        kernel->machine->WriteRegister(2, -1);
+        return move_program_counter();
+    }
+
+    // write fd[0] and fd[1] back to user memory
+    kernel->machine->WriteMem(virtAddr,     4, fd[0]);
+    kernel->machine->WriteMem(virtAddr + 4, 4, fd[1]);
+
+    kernel->machine->WriteRegister(2, 0);
+    return move_program_counter();
+}
+
 void ExceptionHandler(ExceptionType which) {
     int type = kernel->machine->ReadRegister(2);
 
@@ -404,7 +423,15 @@ void ExceptionHandler(ExceptionType which) {
             kernel->interrupt->setStatus(SystemMode);
             DEBUG(dbgSys, "Switch to system mode\n");
             break;
-        case PageFaultException:
+        case PageFaultException: {
+            int vpn = kernel->machine->ReadRegister(BadVAddrReg) / PageSize;
+            kernel->stats->numPageFaults++;
+            if (!kernel->currentThread->space->LoadPage(vpn)) {
+                cerr << "Page fault: out of memory at vpn " << vpn << "\n";
+                SysHalt();
+            }
+            return;
+        }
         case ReadOnlyException:
         case BusErrorException:
         case AddressErrorException:
@@ -495,7 +522,8 @@ void ExceptionHandler(ExceptionType which) {
                 case SC_ThreadExit:
                 case SC_ThreadJoin:
                     return handle_not_implemented_SC(type);
-
+                case SC_Pipe:
+                    return handle_SC_Pipe();
                 default:
                     cerr << "Unexpected system call " << type << "\n";
                     break;

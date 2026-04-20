@@ -17,8 +17,10 @@
 #include "synchconsole.h"
 #include "synchdisk.h"
 #include "post.h"
+#include "pipe.h"
 
 #define MAX_PROCESS 10
+
 //----------------------------------------------------------------------
 // Kernel::Kernel
 // 	Interpret command line arguments in order to determine flags
@@ -91,28 +93,48 @@ void Kernel::Initialize(char *userProgName /*=NULL*/) {
     currentThread = new Thread(userProgName);
     currentThread->setStatus(RUNNING);
 
-    stats = new Statistics();        // collect statistics
-    interrupt = new Interrupt;       // start up interrupt handling
-    scheduler = new Scheduler();     // initialize the ready queue
-    alarm = new Alarm(randomSlice);  // start up time slicing
-    machine = new Machine(debugUserProg);
-    synchConsoleIn = new SynchConsoleInput(consoleIn);     // input from stdin
-    synchConsoleOut = new SynchConsoleOutput(consoleOut);  // output to stdout
-    synchDisk = new SynchDisk();                           //
+    stats        = new Statistics();
+    interrupt    = new Interrupt;
+    scheduler    = new Scheduler();
+    alarm        = new Alarm(randomSlice);
+    machine      = new Machine(debugUserProg);
+    synchConsoleIn  = new SynchConsoleInput(consoleIn);
+    synchConsoleOut = new SynchConsoleOutput(consoleOut);
+    synchDisk    = new SynchDisk();
 #ifdef FILESYS_STUB
-    fileSystem = new FileSystem();
+    fileSystem   = new FileSystem();
 #else
-    fileSystem = new FileSystem(formatFlag);
-#endif  // FILESYS_STUB
-    postOfficeIn = new PostOfficeInput(10);
+    fileSystem   = new FileSystem(formatFlag);
+#endif
+    postOfficeIn  = new PostOfficeInput(10);
     postOfficeOut = new PostOfficeOutput(reliability);
 
-    addrLock = new Semaphore("addrLock", 1);
+    addrLock        = new Semaphore("addrLock", 1);
     gPhysPageBitMap = new Bitmap(128);
-    semTab = new STable();
-    pTab = new PTable(MAX_PROCESS);
+    semTab          = new STable();
+    pTab            = new PTable(MAX_PROCESS);
+
+    // initialize pipe table
+    for (int i = 0; i < MAX_PIPES; i++)
+        pipeTable[i] = NULL;
 
     interrupt->Enable();
+}
+
+//----------------------------------------------------------------------
+// Kernel::CreatePipe
+// 	Find a free slot in pipeTable, create a new Pipe, return its index.
+//	Returns -1 if no free slot.
+//----------------------------------------------------------------------
+
+int Kernel::CreatePipe() {
+    for (int i = 0; i < MAX_PIPES; i++) {
+        if (pipeTable[i] == NULL) {
+            pipeTable[i] = new Pipe();
+            return i;
+        }
+    }
+    return -1;
 }
 
 //----------------------------------------------------------------------
@@ -137,6 +159,11 @@ Kernel::~Kernel() {
     delete semTab;
     delete addrLock;
 
+    for (int i = 0; i < MAX_PIPES; i++) {
+        if (pipeTable[i] != NULL)
+            delete pipeTable[i];
+    }
+
     Exit(0);
 }
 
@@ -144,6 +171,31 @@ Kernel::~Kernel() {
 // Kernel::ThreadSelfTest
 //      Test threads, semaphores, synchlists
 //----------------------------------------------------------------------
+
+void Kernel::ThreadSelfTest() {
+    Semaphore *semaphore;
+    SynchList<int> *synchList;
+
+    LibSelfTest();		// test library routines
+
+    currentThread->SelfTest(); 	// test thread switching
+
+    // test semaphore operation
+    semaphore = new Semaphore("test", 0);
+    semaphore->SelfTest();
+    delete semaphore;
+
+    // test locks, condition variables
+    // using synchronized lists
+    synchList = new SynchList<int>;
+    synchList->SelfTest(9);
+    delete synchList;
+}
+
+//----------------------------------------------------------------------
+// Kernel::PriorityTest
+//----------------------------------------------------------------------
+
 static void PriorityTestThread(void* arg) {
     int p = (int)(long)arg;
     cout << "Running thread with priority: " << p << "\n";
@@ -164,26 +216,6 @@ void Kernel::PriorityTest() {
     t2->Fork((VoidFunctionPtr)PriorityTestThread, (void*)5);
 
     kernel->currentThread->Yield();
-}
-
-void Kernel::ThreadSelfTest() {
-    Semaphore *semaphore;
-    SynchList<int> *synchList;
-
-    LibSelfTest();  // test library routines
-
-    currentThread->SelfTest();  // test thread switching
-
-    // test semaphore operation
-    semaphore = new Semaphore("test", 0);
-    semaphore->SelfTest();
-    delete semaphore;
-
-    // test locks, condition variables
-    // using synchronized lists
-    synchList = new SynchList<int>;
-    synchList->SelfTest(9);
-    delete synchList;
 }
 
 //----------------------------------------------------------------------

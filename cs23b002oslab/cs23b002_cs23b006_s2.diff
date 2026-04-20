@@ -1,0 +1,1131 @@
+diff -ru /home/aditya/nachos-original-backup/code/build.linux/Makefile /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux/Makefile
+--- /home/aditya/nachos-original-backup/code/build.linux/Makefile	2026-04-20 16:01:28.072873094 +0000
++++ /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux/Makefile	2026-04-20 16:43:27.002016275 +0000
+@@ -287,8 +287,9 @@
+ 	../threads/pcb.cc\
+ 	../threads/stable.cc\
+ 	../threads/sem.cc\
++	../threads/pipe.cc
+ 
+-THREAD_O = alarm.o kernel.o main.o scheduler.o synch.o thread.o ptable.o pcb.o stable.o sem.o
++THREAD_O = alarm.o kernel.o main.o scheduler.o synch.o thread.o ptable.o pcb.o stable.o sem.o pipe.o
+ 
+ USERPROG_H = ../userprog/addrspace.h\
+ 	../userprog/syscall.h\
+diff -ru /home/aditya/nachos-original-backup/code/build.linux/Makefile.dep /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux/Makefile.dep
+--- /home/aditya/nachos-original-backup/code/build.linux/Makefile.dep	2026-04-20 16:01:28.072873094 +0000
++++ /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux/Makefile.dep	2026-04-20 17:16:26.191392793 +0000
+@@ -2427,7 +2427,8 @@
+  ../threads/ptable.h ../threads/pcb.h ../threads/synch.h \
+  ../threads/synchlist.h ../threads/synchlist.cc ../lib/libtest.h \
+  ../userprog/synchconsole.h ../machine/console.h ../filesys/synchdisk.h \
+- ../machine/disk.h ../network/post.h ../machine/network.h
++ ../machine/disk.h ../network/post.h ../machine/network.h \
++ ../threads/pipe.h
+ main.o: ../threads/main.cc /usr/include/stdc-predef.h ../lib/copyright.h \
+  ../threads/main.h ../lib/debug.h ../lib/utility.h ../lib/sysdep.h \
+  /usr/include/c++/13/iostream /usr/include/c++/13/bits/requires_hosted.h \
+@@ -3864,6 +3865,166 @@
+  ../threads/scheduler.h ../machine/interrupt.h ../machine/callback.h \
+  ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
+  ../threads/stable.h ../threads/ptable.h ../threads/pcb.h
++pipe.o: ../threads/pipe.cc /usr/include/stdc-predef.h ../threads/pipe.h \
++ ../threads/synch.h ../lib/copyright.h ../threads/thread.h \
++ ../lib/utility.h ../lib/sysdep.h /usr/include/c++/13/iostream \
++ /usr/include/c++/13/bits/requires_hosted.h \
++ /usr/include/x86_64-linux-gnu/c++/13/bits/c++config.h \
++ /usr/include/x86_64-linux-gnu/c++/13/bits/os_defines.h \
++ /usr/include/features.h /usr/include/features-time64.h \
++ /usr/include/x86_64-linux-gnu/bits/wordsize.h \
++ /usr/include/x86_64-linux-gnu/bits/timesize.h \
++ /usr/include/x86_64-linux-gnu/sys/cdefs.h \
++ /usr/include/x86_64-linux-gnu/bits/long-double.h \
++ /usr/include/x86_64-linux-gnu/gnu/stubs.h \
++ /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
++ /usr/include/x86_64-linux-gnu/c++/13/bits/cpu_defines.h \
++ /usr/include/c++/13/pstl/pstl_config.h /usr/include/c++/13/ostream \
++ /usr/include/c++/13/ios /usr/include/c++/13/iosfwd \
++ /usr/include/c++/13/bits/stringfwd.h \
++ /usr/include/c++/13/bits/memoryfwd.h /usr/include/c++/13/bits/postypes.h \
++ /usr/include/c++/13/cwchar /usr/include/wchar.h \
++ /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
++ /usr/include/x86_64-linux-gnu/bits/floatn.h \
++ /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
++ /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
++ /usr/include/x86_64-linux-gnu/bits/wchar.h \
++ /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
++ /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h \
++ /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
++ /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
++ /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
++ /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
++ /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
++ /usr/include/c++/13/exception /usr/include/c++/13/bits/exception.h \
++ /usr/include/c++/13/bits/exception_ptr.h \
++ /usr/include/c++/13/bits/exception_defines.h \
++ /usr/include/c++/13/bits/cxxabi_init_exception.h \
++ /usr/include/c++/13/typeinfo /usr/include/c++/13/bits/hash_bytes.h \
++ /usr/include/c++/13/new /usr/include/c++/13/bits/move.h \
++ /usr/include/c++/13/type_traits \
++ /usr/include/c++/13/bits/nested_exception.h \
++ /usr/include/c++/13/bits/char_traits.h \
++ /usr/include/c++/13/bits/localefwd.h \
++ /usr/include/x86_64-linux-gnu/c++/13/bits/c++locale.h \
++ /usr/include/c++/13/clocale /usr/include/locale.h \
++ /usr/include/x86_64-linux-gnu/bits/locale.h /usr/include/c++/13/cctype \
++ /usr/include/ctype.h /usr/include/x86_64-linux-gnu/bits/types.h \
++ /usr/include/x86_64-linux-gnu/bits/typesizes.h \
++ /usr/include/x86_64-linux-gnu/bits/time64.h \
++ /usr/include/x86_64-linux-gnu/bits/endian.h \
++ /usr/include/x86_64-linux-gnu/bits/endianness.h \
++ /usr/include/c++/13/bits/ios_base.h /usr/include/c++/13/ext/atomicity.h \
++ /usr/include/x86_64-linux-gnu/c++/13/bits/gthr.h \
++ /usr/include/x86_64-linux-gnu/c++/13/bits/gthr-default.h \
++ /usr/include/pthread.h /usr/include/sched.h \
++ /usr/include/x86_64-linux-gnu/bits/types/time_t.h \
++ /usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h \
++ /usr/include/x86_64-linux-gnu/bits/sched.h \
++ /usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h \
++ /usr/include/x86_64-linux-gnu/bits/cpu-set.h /usr/include/time.h \
++ /usr/include/x86_64-linux-gnu/bits/time.h \
++ /usr/include/x86_64-linux-gnu/bits/timex.h \
++ /usr/include/x86_64-linux-gnu/bits/types/struct_timeval.h \
++ /usr/include/x86_64-linux-gnu/bits/types/clock_t.h \
++ /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h \
++ /usr/include/x86_64-linux-gnu/bits/types/clockid_t.h \
++ /usr/include/x86_64-linux-gnu/bits/types/timer_t.h \
++ /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h \
++ /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h \
++ /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h \
++ /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
++ /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h \
++ /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
++ /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h \
++ /usr/include/x86_64-linux-gnu/bits/setjmp.h \
++ /usr/include/x86_64-linux-gnu/bits/types/__sigset_t.h \
++ /usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h \
++ /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h \
++ /usr/include/x86_64-linux-gnu/c++/13/bits/atomic_word.h \
++ /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
++ /usr/include/c++/13/bits/locale_classes.h /usr/include/c++/13/string \
++ /usr/include/c++/13/bits/allocator.h \
++ /usr/include/x86_64-linux-gnu/c++/13/bits/c++allocator.h \
++ /usr/include/c++/13/bits/new_allocator.h \
++ /usr/include/c++/13/bits/functexcept.h \
++ /usr/include/c++/13/bits/cpp_type_traits.h \
++ /usr/include/c++/13/bits/ostream_insert.h \
++ /usr/include/c++/13/bits/cxxabi_forced.h \
++ /usr/include/c++/13/bits/stl_iterator_base_funcs.h \
++ /usr/include/c++/13/bits/concept_check.h \
++ /usr/include/c++/13/debug/assertions.h \
++ /usr/include/c++/13/bits/stl_iterator_base_types.h \
++ /usr/include/c++/13/bits/stl_iterator.h \
++ /usr/include/c++/13/ext/type_traits.h \
++ /usr/include/c++/13/bits/ptr_traits.h \
++ /usr/include/c++/13/bits/stl_function.h \
++ /usr/include/c++/13/backward/binders.h \
++ /usr/include/c++/13/ext/numeric_traits.h \
++ /usr/include/c++/13/bits/stl_algobase.h \
++ /usr/include/c++/13/bits/stl_pair.h /usr/include/c++/13/bits/utility.h \
++ /usr/include/c++/13/debug/debug.h \
++ /usr/include/c++/13/bits/predefined_ops.h /usr/include/c++/13/bit \
++ /usr/include/c++/13/bits/refwrap.h /usr/include/c++/13/bits/invoke.h \
++ /usr/include/c++/13/bits/range_access.h \
++ /usr/include/c++/13/initializer_list \
++ /usr/include/c++/13/bits/basic_string.h \
++ /usr/include/c++/13/ext/alloc_traits.h \
++ /usr/include/c++/13/bits/alloc_traits.h \
++ /usr/include/c++/13/bits/stl_construct.h /usr/include/c++/13/string_view \
++ /usr/include/c++/13/bits/functional_hash.h \
++ /usr/include/c++/13/bits/string_view.tcc \
++ /usr/include/c++/13/ext/string_conversions.h /usr/include/c++/13/cstdlib \
++ /usr/include/stdlib.h /usr/include/x86_64-linux-gnu/bits/waitflags.h \
++ /usr/include/x86_64-linux-gnu/bits/waitstatus.h \
++ /usr/include/x86_64-linux-gnu/sys/types.h \
++ /usr/include/x86_64-linux-gnu/bits/stdint-intn.h /usr/include/endian.h \
++ /usr/include/x86_64-linux-gnu/bits/byteswap.h \
++ /usr/include/x86_64-linux-gnu/bits/uintn-identity.h \
++ /usr/include/x86_64-linux-gnu/sys/select.h \
++ /usr/include/x86_64-linux-gnu/bits/select.h \
++ /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h \
++ /usr/include/alloca.h /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
++ /usr/include/c++/13/bits/std_abs.h /usr/include/c++/13/cstdio \
++ /usr/include/stdio.h /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h \
++ /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h \
++ /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h \
++ /usr/include/x86_64-linux-gnu/bits/types/cookie_io_functions_t.h \
++ /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
++ /usr/include/c++/13/cerrno /usr/include/errno.h \
++ /usr/include/x86_64-linux-gnu/bits/errno.h /usr/include/linux/errno.h \
++ /usr/include/x86_64-linux-gnu/asm/errno.h \
++ /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
++ /usr/include/x86_64-linux-gnu/bits/types/error_t.h \
++ /usr/include/c++/13/bits/charconv.h \
++ /usr/include/c++/13/bits/basic_string.tcc \
++ /usr/include/c++/13/bits/memory_resource.h /usr/include/c++/13/cstddef \
++ /usr/include/c++/13/bits/uses_allocator.h \
++ /usr/include/c++/13/bits/uses_allocator_args.h /usr/include/c++/13/tuple \
++ /usr/include/c++/13/bits/locale_classes.tcc \
++ /usr/include/c++/13/system_error \
++ /usr/include/x86_64-linux-gnu/c++/13/bits/error_constants.h \
++ /usr/include/c++/13/stdexcept /usr/include/c++/13/streambuf \
++ /usr/include/c++/13/bits/streambuf.tcc \
++ /usr/include/c++/13/bits/basic_ios.h \
++ /usr/include/c++/13/bits/locale_facets.h /usr/include/c++/13/cwctype \
++ /usr/include/wctype.h /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
++ /usr/include/x86_64-linux-gnu/c++/13/bits/ctype_base.h \
++ /usr/include/c++/13/bits/streambuf_iterator.h \
++ /usr/include/x86_64-linux-gnu/c++/13/bits/ctype_inline.h \
++ /usr/include/c++/13/bits/locale_facets.tcc \
++ /usr/include/c++/13/bits/basic_ios.tcc \
++ /usr/include/c++/13/bits/ostream.tcc /usr/include/c++/13/istream \
++ /usr/include/c++/13/bits/istream.tcc /usr/include/c++/13/stdlib.h \
++ /usr/include/string.h /usr/include/strings.h ../machine/machine.h \
++ ../machine/translate.h ../userprog/addrspace.h ../filesys/filesys.h \
++ ../filesys/openfile.h ../filesys/filetable.h ../lib/list.h \
++ ../lib/debug.h ../lib/list.cc ../threads/main.h ../threads/kernel.h \
++ ../threads/scheduler.h ../machine/interrupt.h ../machine/callback.h \
++ ../machine/stats.h ../threads/alarm.h ../machine/timer.h ../lib/bitmap.h \
++ ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
++ ../threads/pcb.h
+ addrspace.o: ../userprog/addrspace.cc /usr/include/stdc-predef.h \
+  ../lib/copyright.h ../threads/main.h ../lib/debug.h ../lib/utility.h \
+  ../lib/sysdep.h /usr/include/c++/13/iostream \
+@@ -4185,7 +4346,7 @@
+  ../threads/stable.h ../threads/sem.h ../threads/ptable.h \
+  ../threads/pcb.h ../userprog/syscall.h ../userprog/errno.h \
+  ../userprog/ksyscall.h ../userprog/synchconsole.h ../machine/console.h \
+- ../threads/synch.h ../userprog/ksyscallhelper.h \
++ ../threads/synch.h ../userprog/ksyscallhelper.h ../threads/pipe.h \
+  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h /usr/include/stdint.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
+  /usr/include/x86_64-linux-gnu/bits/stdint-least.h
+Binary files /home/aditya/nachos-original-backup/code/build.linux/addrspace.o and /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux/addrspace.o differ
+Binary files /home/aditya/nachos-original-backup/code/build.linux/alarm.o and /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux/alarm.o differ
+Binary files /home/aditya/nachos-original-backup/code/build.linux/console.o and /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux/console.o differ
+Binary files /home/aditya/nachos-original-backup/code/build.linux/disk.o and /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux/disk.o differ
+Binary files /home/aditya/nachos-original-backup/code/build.linux/exception.o and /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux/exception.o differ
+Binary files /home/aditya/nachos-original-backup/code/build.linux/filehdr.o and /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux/filehdr.o differ
+Binary files /home/aditya/nachos-original-backup/code/build.linux/filesys.o and /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux/filesys.o differ
+Binary files /home/aditya/nachos-original-backup/code/build.linux/interrupt.o and /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux/interrupt.o differ
+Binary files /home/aditya/nachos-original-backup/code/build.linux/kernel.o and /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux/kernel.o differ
+Binary files /home/aditya/nachos-original-backup/code/build.linux/machine.o and /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux/machine.o differ
+Binary files /home/aditya/nachos-original-backup/code/build.linux/main.o and /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux/main.o differ
+Binary files /home/aditya/nachos-original-backup/code/build.linux/mipssim.o and /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux/mipssim.o differ
+Binary files /home/aditya/nachos-original-backup/code/build.linux/nachos and /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux/nachos differ
+Binary files /home/aditya/nachos-original-backup/code/build.linux/network.o and /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux/network.o differ
+Binary files /home/aditya/nachos-original-backup/code/build.linux/pcb.o and /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux/pcb.o differ
+Only in /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux: pipe.o
+Binary files /home/aditya/nachos-original-backup/code/build.linux/post.o and /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux/post.o differ
+Binary files /home/aditya/nachos-original-backup/code/build.linux/ptable.o and /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux/ptable.o differ
+Binary files /home/aditya/nachos-original-backup/code/build.linux/scheduler.o and /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux/scheduler.o differ
+Binary files /home/aditya/nachos-original-backup/code/build.linux/synch.o and /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux/synch.o differ
+Binary files /home/aditya/nachos-original-backup/code/build.linux/synchconsole.o and /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux/synchconsole.o differ
+Binary files /home/aditya/nachos-original-backup/code/build.linux/synchdisk.o and /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux/synchdisk.o differ
+Binary files /home/aditya/nachos-original-backup/code/build.linux/thread.o and /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux/thread.o differ
+Binary files /home/aditya/nachos-original-backup/code/build.linux/timer.o and /home/aditya/cs23b002oslab/nachos-project-master/code/build.linux/timer.o differ
+Binary files /home/aditya/nachos-original-backup/code/test/abs_test and /home/aditya/cs23b002oslab/nachos-project-master/code/test/abs_test differ
+Binary files /home/aditya/nachos-original-backup/code/test/abs_test.coff and /home/aditya/cs23b002oslab/nachos-project-master/code/test/abs_test.coff differ
+Binary files /home/aditya/nachos-original-backup/code/test/add and /home/aditya/cs23b002oslab/nachos-project-master/code/test/add differ
+Binary files /home/aditya/nachos-original-backup/code/test/add.coff and /home/aditya/cs23b002oslab/nachos-project-master/code/test/add.coff differ
+Binary files /home/aditya/nachos-original-backup/code/test/ascii and /home/aditya/cs23b002oslab/nachos-project-master/code/test/ascii differ
+Binary files /home/aditya/nachos-original-backup/code/test/ascii.coff and /home/aditya/cs23b002oslab/nachos-project-master/code/test/ascii.coff differ
+Binary files /home/aditya/nachos-original-backup/code/test/bubblesort and /home/aditya/cs23b002oslab/nachos-project-master/code/test/bubblesort differ
+Binary files /home/aditya/nachos-original-backup/code/test/bubblesort.coff and /home/aditya/cs23b002oslab/nachos-project-master/code/test/bubblesort.coff differ
+Binary files /home/aditya/nachos-original-backup/code/test/char_io and /home/aditya/cs23b002oslab/nachos-project-master/code/test/char_io differ
+Binary files /home/aditya/nachos-original-backup/code/test/char_io.coff and /home/aditya/cs23b002oslab/nachos-project-master/code/test/char_io.coff differ
+Binary files /home/aditya/nachos-original-backup/code/test/create_file and /home/aditya/cs23b002oslab/nachos-project-master/code/test/create_file differ
+Binary files /home/aditya/nachos-original-backup/code/test/create_file.coff and /home/aditya/cs23b002oslab/nachos-project-master/code/test/create_file.coff differ
+Binary files /home/aditya/nachos-original-backup/code/test/exec and /home/aditya/cs23b002oslab/nachos-project-master/code/test/exec differ
+Binary files /home/aditya/nachos-original-backup/code/test/exec.coff and /home/aditya/cs23b002oslab/nachos-project-master/code/test/exec.coff differ
+Binary files /home/aditya/nachos-original-backup/code/test/halt and /home/aditya/cs23b002oslab/nachos-project-master/code/test/halt differ
+Binary files /home/aditya/nachos-original-backup/code/test/halt.coff and /home/aditya/cs23b002oslab/nachos-project-master/code/test/halt.coff differ
+Binary files /home/aditya/nachos-original-backup/code/test/help and /home/aditya/cs23b002oslab/nachos-project-master/code/test/help differ
+Binary files /home/aditya/nachos-original-backup/code/test/help.coff and /home/aditya/cs23b002oslab/nachos-project-master/code/test/help.coff differ
+Binary files /home/aditya/nachos-original-backup/code/test/main and /home/aditya/cs23b002oslab/nachos-project-master/code/test/main differ
+Binary files /home/aditya/nachos-original-backup/code/test/main.coff and /home/aditya/cs23b002oslab/nachos-project-master/code/test/main.coff differ
+Binary files /home/aditya/nachos-original-backup/code/test/matmult and /home/aditya/cs23b002oslab/nachos-project-master/code/test/matmult differ
+Binary files /home/aditya/nachos-original-backup/code/test/matmult.coff and /home/aditya/cs23b002oslab/nachos-project-master/code/test/matmult.coff differ
+Binary files /home/aditya/nachos-original-backup/code/test/no_sleep_test and /home/aditya/cs23b002oslab/nachos-project-master/code/test/no_sleep_test differ
+Binary files /home/aditya/nachos-original-backup/code/test/num_io and /home/aditya/cs23b002oslab/nachos-project-master/code/test/num_io differ
+Binary files /home/aditya/nachos-original-backup/code/test/num_io.coff and /home/aditya/cs23b002oslab/nachos-project-master/code/test/num_io.coff differ
+Binary files /home/aditya/nachos-original-backup/code/test/open_file and /home/aditya/cs23b002oslab/nachos-project-master/code/test/open_file differ
+Binary files /home/aditya/nachos-original-backup/code/test/open_file.coff and /home/aditya/cs23b002oslab/nachos-project-master/code/test/open_file.coff differ
+Only in /home/aditya/cs23b002oslab/nachos-project-master/code/test: pipe_test
+Only in /home/aditya/cs23b002oslab/nachos-project-master/code/test: pipe_test.c
+Binary files /home/aditya/nachos-original-backup/code/test/random and /home/aditya/cs23b002oslab/nachos-project-master/code/test/random differ
+Binary files /home/aditya/nachos-original-backup/code/test/random.coff and /home/aditya/cs23b002oslab/nachos-project-master/code/test/random.coff differ
+Binary files /home/aditya/nachos-original-backup/code/test/readwrite and /home/aditya/cs23b002oslab/nachos-project-master/code/test/readwrite differ
+Binary files /home/aditya/nachos-original-backup/code/test/readwrite.coff and /home/aditya/cs23b002oslab/nachos-project-master/code/test/readwrite.coff differ
+Binary files /home/aditya/nachos-original-backup/code/test/segments and /home/aditya/cs23b002oslab/nachos-project-master/code/test/segments differ
+Binary files /home/aditya/nachos-original-backup/code/test/segments.coff and /home/aditya/cs23b002oslab/nachos-project-master/code/test/segments.coff differ
+Binary files /home/aditya/nachos-original-backup/code/test/shell and /home/aditya/cs23b002oslab/nachos-project-master/code/test/shell differ
+Binary files /home/aditya/nachos-original-backup/code/test/shell.coff and /home/aditya/cs23b002oslab/nachos-project-master/code/test/shell.coff differ
+Binary files /home/aditya/nachos-original-backup/code/test/sinhvien and /home/aditya/cs23b002oslab/nachos-project-master/code/test/sinhvien differ
+Binary files /home/aditya/nachos-original-backup/code/test/sinhvien.coff and /home/aditya/cs23b002oslab/nachos-project-master/code/test/sinhvien.coff differ
+Binary files /home/aditya/nachos-original-backup/code/test/sleep_test and /home/aditya/cs23b002oslab/nachos-project-master/code/test/sleep_test differ
+Binary files /home/aditya/nachos-original-backup/code/test/sort and /home/aditya/cs23b002oslab/nachos-project-master/code/test/sort differ
+Binary files /home/aditya/nachos-original-backup/code/test/sort.coff and /home/aditya/cs23b002oslab/nachos-project-master/code/test/sort.coff differ
+diff -ru /home/aditya/nachos-original-backup/code/test/start.S /home/aditya/cs23b002oslab/nachos-project-master/code/test/start.S
+--- /home/aditya/nachos-original-backup/code/test/start.S	2026-04-20 16:01:28.052872956 +0000
++++ /home/aditya/cs23b002oslab/nachos-project-master/code/test/start.S	2026-04-20 16:20:43.112471931 +0000
+@@ -296,3 +296,10 @@
+     	syscall
+     	j $31
+     	.end Sleep
++	.globl Pipe
++		.ent	Pipe
++Pipe:
++		addiu $2, $0, SC_Pipe
++		syscall
++		j	$31
++		.end	Pipe
+\ No newline at end of file
+Binary files /home/aditya/nachos-original-backup/code/test/start.o and /home/aditya/cs23b002oslab/nachos-project-master/code/test/start.o differ
+Binary files /home/aditya/nachos-original-backup/code/test/str_io and /home/aditya/cs23b002oslab/nachos-project-master/code/test/str_io differ
+Binary files /home/aditya/nachos-original-backup/code/test/str_io.coff and /home/aditya/cs23b002oslab/nachos-project-master/code/test/str_io.coff differ
+Binary files /home/aditya/nachos-original-backup/code/test/test_sem and /home/aditya/cs23b002oslab/nachos-project-master/code/test/test_sem differ
+Binary files /home/aditya/nachos-original-backup/code/test/test_sem.coff and /home/aditya/cs23b002oslab/nachos-project-master/code/test/test_sem.coff differ
+Binary files /home/aditya/nachos-original-backup/code/test/test_syscall and /home/aditya/cs23b002oslab/nachos-project-master/code/test/test_syscall differ
+Binary files /home/aditya/nachos-original-backup/code/test/test_syscall.coff and /home/aditya/cs23b002oslab/nachos-project-master/code/test/test_syscall.coff differ
+Binary files /home/aditya/nachos-original-backup/code/test/voinuoc and /home/aditya/cs23b002oslab/nachos-project-master/code/test/voinuoc differ
+Binary files /home/aditya/nachos-original-backup/code/test/voinuoc.coff and /home/aditya/cs23b002oslab/nachos-project-master/code/test/voinuoc.coff differ
+diff -ru /home/aditya/nachos-original-backup/code/threads/kernel.cc /home/aditya/cs23b002oslab/nachos-project-master/code/threads/kernel.cc
+--- /home/aditya/nachos-original-backup/code/threads/kernel.cc	2026-04-20 16:01:28.032872820 +0000
++++ /home/aditya/cs23b002oslab/nachos-project-master/code/threads/kernel.cc	2026-04-20 16:35:35.822174953 +0000
+@@ -17,8 +17,10 @@
+ #include "synchconsole.h"
+ #include "synchdisk.h"
+ #include "post.h"
++#include "pipe.h"
+ 
+ #define MAX_PROCESS 10
++
+ //----------------------------------------------------------------------
+ // Kernel::Kernel
+ // 	Interpret command line arguments in order to determine flags
+@@ -91,31 +93,51 @@
+     currentThread = new Thread(userProgName);
+     currentThread->setStatus(RUNNING);
+ 
+-    stats = new Statistics();        // collect statistics
+-    interrupt = new Interrupt;       // start up interrupt handling
+-    scheduler = new Scheduler();     // initialize the ready queue
+-    alarm = new Alarm(randomSlice);  // start up time slicing
+-    machine = new Machine(debugUserProg);
+-    synchConsoleIn = new SynchConsoleInput(consoleIn);     // input from stdin
+-    synchConsoleOut = new SynchConsoleOutput(consoleOut);  // output to stdout
+-    synchDisk = new SynchDisk();                           //
++    stats        = new Statistics();
++    interrupt    = new Interrupt;
++    scheduler    = new Scheduler();
++    alarm        = new Alarm(randomSlice);
++    machine      = new Machine(debugUserProg);
++    synchConsoleIn  = new SynchConsoleInput(consoleIn);
++    synchConsoleOut = new SynchConsoleOutput(consoleOut);
++    synchDisk    = new SynchDisk();
+ #ifdef FILESYS_STUB
+-    fileSystem = new FileSystem();
++    fileSystem   = new FileSystem();
+ #else
+-    fileSystem = new FileSystem(formatFlag);
+-#endif  // FILESYS_STUB
+-    postOfficeIn = new PostOfficeInput(10);
++    fileSystem   = new FileSystem(formatFlag);
++#endif
++    postOfficeIn  = new PostOfficeInput(10);
+     postOfficeOut = new PostOfficeOutput(reliability);
+ 
+-    addrLock = new Semaphore("addrLock", 1);
++    addrLock        = new Semaphore("addrLock", 1);
+     gPhysPageBitMap = new Bitmap(128);
+-    semTab = new STable();
+-    pTab = new PTable(MAX_PROCESS);
++    semTab          = new STable();
++    pTab            = new PTable(MAX_PROCESS);
++
++    // initialize pipe table
++    for (int i = 0; i < MAX_PIPES; i++)
++        pipeTable[i] = NULL;
+ 
+     interrupt->Enable();
+ }
+ 
+ //----------------------------------------------------------------------
++// Kernel::CreatePipe
++// 	Find a free slot in pipeTable, create a new Pipe, return its index.
++//	Returns -1 if no free slot.
++//----------------------------------------------------------------------
++
++int Kernel::CreatePipe() {
++    for (int i = 0; i < MAX_PIPES; i++) {
++        if (pipeTable[i] == NULL) {
++            pipeTable[i] = new Pipe();
++            return i;
++        }
++    }
++    return -1;
++}
++
++//----------------------------------------------------------------------
+ // Kernel::~Kernel
+ // 	Nachos is halting.  De-allocate global data structures.
+ //----------------------------------------------------------------------
+@@ -137,6 +159,11 @@
+     delete semTab;
+     delete addrLock;
+ 
++    for (int i = 0; i < MAX_PIPES; i++) {
++        if (pipeTable[i] != NULL)
++            delete pipeTable[i];
++    }
++
+     Exit(0);
+ }
+ 
+@@ -144,6 +171,31 @@
+ // Kernel::ThreadSelfTest
+ //      Test threads, semaphores, synchlists
+ //----------------------------------------------------------------------
++
++void Kernel::ThreadSelfTest() {
++    Semaphore *semaphore;
++    SynchList<int> *synchList;
++
++    LibSelfTest();		// test library routines
++
++    currentThread->SelfTest(); 	// test thread switching
++
++    // test semaphore operation
++    semaphore = new Semaphore("test", 0);
++    semaphore->SelfTest();
++    delete semaphore;
++
++    // test locks, condition variables
++    // using synchronized lists
++    synchList = new SynchList<int>;
++    synchList->SelfTest(9);
++    delete synchList;
++}
++
++//----------------------------------------------------------------------
++// Kernel::PriorityTest
++//----------------------------------------------------------------------
++
+ static void PriorityTestThread(void* arg) {
+     int p = (int)(long)arg;
+     cout << "Running thread with priority: " << p << "\n";
+@@ -166,26 +218,6 @@
+     kernel->currentThread->Yield();
+ }
+ 
+-void Kernel::ThreadSelfTest() {
+-    Semaphore *semaphore;
+-    SynchList<int> *synchList;
+-
+-    LibSelfTest();  // test library routines
+-
+-    currentThread->SelfTest();  // test thread switching
+-
+-    // test semaphore operation
+-    semaphore = new Semaphore("test", 0);
+-    semaphore->SelfTest();
+-    delete semaphore;
+-
+-    // test locks, condition variables
+-    // using synchronized lists
+-    synchList = new SynchList<int>;
+-    synchList->SelfTest(9);
+-    delete synchList;
+-}
+-
+ //----------------------------------------------------------------------
+ // Kernel::ConsoleTest
+ //      Test the synchconsole
+diff -ru /home/aditya/nachos-original-backup/code/threads/kernel.h /home/aditya/cs23b002oslab/nachos-project-master/code/threads/kernel.h
+--- /home/aditya/nachos-original-backup/code/threads/kernel.h	2026-04-20 16:01:28.032872820 +0000
++++ /home/aditya/cs23b002oslab/nachos-project-master/code/threads/kernel.h	2026-04-20 16:36:31.272148009 +0000
+@@ -18,6 +18,7 @@
+ #include "alarm.h"
+ #include "filesys.h"
+ #include "machine.h"
++      
+ 
+ class PostOfficeInput;
+ class PostOfficeOutput;
+@@ -25,6 +26,12 @@
+ class SynchConsoleOutput;
+ class SynchDisk;
+ class Semaphore;
++#define MAX_PIPES 10
++#define PIPE_FD_BASE 10
++#define IS_PIPE_FD(fd)   ((fd) >= PIPE_FD_BASE)
++#define PIPE_INDEX(fd)   (((fd) - PIPE_FD_BASE) / 2)
++#define IS_PIPE_READ(fd) (((fd) - PIPE_FD_BASE) % 2 == 0)
++class Pipe;
+ #include "bitmap.h"
+ #include "stable.h"
+ #include "ptable.h"
+@@ -68,6 +75,9 @@
+     STable *semTab;
+     PTable *pTab;
+ 
++    Pipe* pipeTable[MAX_PIPES];
++    int   CreatePipe();
++
+     int hostName;  // machine identifier
+ 
+    private:
+Only in /home/aditya/cs23b002oslab/nachos-project-master/code/threads: pipe.cc
+Only in /home/aditya/cs23b002oslab/nachos-project-master/code/threads: pipe.h
+diff -ru /home/aditya/nachos-original-backup/code/userprog/addrspace.cc /home/aditya/cs23b002oslab/nachos-project-master/code/userprog/addrspace.cc
+--- /home/aditya/nachos-original-backup/code/userprog/addrspace.cc	2026-04-20 16:01:28.092873232 +0000
++++ /home/aditya/cs23b002oslab/nachos-project-master/code/userprog/addrspace.cc	2026-04-20 17:09:18.041537428 +0000
+@@ -1,15 +1,5 @@
+ // addrspace.cc
+-//	Routines to manage address spaces (executing user programs).
+-//
+-//	In order to run a user program, you must:
+-//
+-//	1. link with the -n -T 0 option
+-//	2. run coff2noff to convert the object file to Nachos format
+-//		(Nachos object code format is essentially just a simpler
+-//		version of the UNIX executable object code format)
+-//	3. load the NOFF file into the Nachos file system
+-//		(if you are using the "stub" file system, you
+-//		don't need to do this last step)
++//      Routines to manage address spaces (executing user programs).
+ //
+ // Copyright (c) 1992-1996 The Regents of the University of California.
+ // All rights reserved.  See copyright.h for copyright notice and limitation
+@@ -24,9 +14,6 @@
+ 
+ //----------------------------------------------------------------------
+ // SwapHeader
+-// 	Do little endian to big endian conversion on the bytes in the
+-//	object file header, in case the file was generated on a little
+-//	endian machine, and we're now running on a big endian machine.
+ //----------------------------------------------------------------------
+ 
+ static void SwapHeader(NoffHeader *noffH) {
+@@ -36,8 +23,7 @@
+     noffH->code.inFileAddr = WordToHost(noffH->code.inFileAddr);
+ #ifdef RDATA
+     noffH->readonlyData.size = WordToHost(noffH->readonlyData.size);
+-    noffH->readonlyData.virtualAddr =
+-        WordToHost(noffH->readonlyData.virtualAddr);
++    noffH->readonlyData.virtualAddr = WordToHost(noffH->readonlyData.virtualAddr);
+     noffH->readonlyData.inFileAddr = WordToHost(noffH->readonlyData.inFileAddr);
+ #endif
+     noffH->initData.size = WordToHost(noffH->initData.size);
+@@ -46,174 +32,186 @@
+     noffH->uninitData.size = WordToHost(noffH->uninitData.size);
+     noffH->uninitData.virtualAddr = WordToHost(noffH->uninitData.virtualAddr);
+     noffH->uninitData.inFileAddr = WordToHost(noffH->uninitData.inFileAddr);
+-
+-#ifdef RDATA
+-    DEBUG(dbgAddr, "code = " << noffH->code.size
+-                             << " readonly = " << noffH->readonlyData.size
+-                             << " init = " << noffH->initData.size
+-                             << " uninit = " << noffH->uninitData.size << "\n");
+-#endif
+ }
+ 
+ //----------------------------------------------------------------------
+ // AddrSpace::AddrSpace
+-// 	Create an address space to run a user program.
+-//	Set up the translation from program memory to physical
+-//	memory.  For now, this is really simple (1:1), since we are
+-//	only uniprogramming, and we have a single unsegmented page table
+ //----------------------------------------------------------------------
+ 
+ AddrSpace::AddrSpace() {
+-    // pageTable = new TranslationEntry[NumPhysPages];
+-    // for (int i = 0; i < NumPhysPages; i++) {
+-    //     pageTable[i].virtualPage = i;  // for now, virt page # = phys page #
+-    //     pageTable[i].physicalPage = i;
+-    //     pageTable[i].valid = TRUE;
+-    //     pageTable[i].use = FALSE;
+-    //     pageTable[i].dirty = FALSE;
+-    //     pageTable[i].readOnly = FALSE;
+-    // }
+-
+-    // // zero out the entire address space
+-    // bzero(kernel->machine->mainMemory, MemorySize);
+-}
+-
+-//----------------------------------------------------------------------
+-// AddrSpace::~AddrSpace
+-// 	Dealloate an address space.
+-//----------------------------------------------------------------------
+-
+-AddrSpace::~AddrSpace() {
+-    int i;
+-    for (i = 0; i < numPages; i++) {
+-        kernel->gPhysPageBitMap->Clear(pageTable[i].physicalPage);
+-    }
+-    delete[] pageTable;
++    executable = NULL;
++    codeSize = codeVirtAddr = codeFileAddr = 0;
++    initDataSize = initDataVirtAddr = initDataFileAddr = 0;
+ }
+ 
+ //----------------------------------------------------------------------
+-// AddrSpace::Load
+-// 	Load a user program into memory from a file.
+-//
+-//	Assumes that the page table has been initialized, and that
+-//	the object code file is in NOFF format.
+-//
+-//	"fileName" is the file containing the object code to load into memory
++// AddrSpace::AddrSpace(char *fileName)
++//      Demand paging: set up page table with all pages invalid.
++//      Pages are loaded on demand when PageFaultException occurs.
+ //----------------------------------------------------------------------
+ 
+ AddrSpace::AddrSpace(char *fileName) {
+-    OpenFile *executable = kernel->fileSystem->Open(fileName);
+     NoffHeader noffH;
+-    unsigned int i, size, j, offset;
+-    unsigned int numCodePage,
+-        numDataPage;  // số trang cho phần code và phần initData
+-    int lastCodePageSize, lastDataPageSize, firstDataPageSize,
+-        tempDataSize;  // kích thước ghi vào trang cuối Code, initData, và trang
+-                       // đầu của initData
++    unsigned int size;
+ 
++    executable = kernel->fileSystem->Open(fileName);
+     if (executable == NULL) {
+         DEBUG(dbgFile, "\n Error opening file.");
+         return;
+     }
+-    //đọc header của file
++
+     executable->ReadAt((char *)&noffH, sizeof(noffH), 0);
+     if ((noffH.noffMagic != NOFFMAGIC) &&
+         (WordToHost(noffH.noffMagic) == NOFFMAGIC))
+         SwapHeader(&noffH);
+     ASSERT(noffH.noffMagic == NOFFMAGIC);
++
++    // save segment info for use in LoadPage later
++    codeSize      = noffH.code.size;
++    codeVirtAddr  = noffH.code.virtualAddr;
++    codeFileAddr  = noffH.code.inFileAddr;
++    initDataSize      = noffH.initData.size;
++    initDataVirtAddr  = noffH.initData.virtualAddr;
++    initDataFileAddr  = noffH.initData.inFileAddr;
++
+     kernel->addrLock->P();
+-    // how big is address space?
++
+     size = noffH.code.size + noffH.initData.size + noffH.uninitData.size +
+-           UserStackSize;  // we need to increase the size
+-                           // to leave room for the stack
++           UserStackSize;
+     numPages = divRoundUp(size, PageSize);
+     size = numPages * PageSize;
+ 
+-    ASSERT(numPages <= NumPhysPages);  // check we're not trying
+-                                       // to run anything too big --
+-                                       // at least until we have
+-                                       // virtual memory
+-
+-    // Check the available memory enough to load new process
+-    // debug
+-    if (numPages > kernel->gPhysPageBitMap->NumClear()) {
+-        DEBUG(dbgAddr, "Not enough free space");
+-        numPages = 0;
+-        delete executable;
+-        kernel->addrLock->V();
+-        return;
+-    }
++    ASSERT(numPages <= NumPhysPages);
++
+     DEBUG(dbgAddr, "Initializing address space: " << numPages << ", " << size);
+-    // first, set up the translation
++
++    // set up page table — all pages invalid, no physical memory allocated yet
+     pageTable = new TranslationEntry[numPages];
+-    for (i = 0; i < numPages; i++) {
+-        pageTable[i].virtualPage = i;  // for now, virtual page # = phys page #
+-        pageTable[i].physicalPage = kernel->gPhysPageBitMap->FindAndSet();
+-        // cerr << pageTable[i].physicalPage << endl;
+-        pageTable[i].valid = TRUE;
+-        pageTable[i].use = FALSE;
+-        pageTable[i].dirty = FALSE;
+-        pageTable[i].readOnly = FALSE;  // if the code segment was entirely on
+-        // a separate page, we could set its
+-        // pages to be read-only
+-        // xóa các trang này trên memory
+-        bzero(&(kernel->machine
+-                    ->mainMemory[pageTable[i].physicalPage * PageSize]),
+-              PageSize);
+-        DEBUG(dbgAddr, "phyPage " << pageTable[i].physicalPage);
++    for (unsigned int i = 0; i < numPages; i++) {
++        pageTable[i].virtualPage  = i;
++        pageTable[i].physicalPage = -1;
++        pageTable[i].valid        = FALSE;
++        pageTable[i].use          = FALSE;
++        pageTable[i].dirty        = FALSE;
++        pageTable[i].readOnly     = FALSE;
+     }
+ 
+-    if (noffH.code.size > 0) {
+-        for (i = 0; i < numPages; i++)
+-            executable->ReadAt(
+-                &(kernel->machine->mainMemory[noffH.code.virtualAddr]) +
+-                    (pageTable[i].physicalPage * PageSize),
+-                PageSize, noffH.code.inFileAddr + (i * PageSize));
++    kernel->addrLock->V();
++    // DO NOT delete executable — LoadPage needs it later
++}
++
++//----------------------------------------------------------------------
++// AddrSpace::~AddrSpace
++//----------------------------------------------------------------------
++
++AddrSpace::~AddrSpace() {
++    for (unsigned int i = 0; i < numPages; i++) {
++        if (pageTable[i].valid)
++            kernel->gPhysPageBitMap->Clear(pageTable[i].physicalPage);
+     }
++    delete[] pageTable;
++    if (executable != NULL)
++        delete executable;
++}
++
++//----------------------------------------------------------------------
++// AddrSpace::LoadPage
++//      Handle a page fault for virtual page vpn.
++//      Allocates a physical frame, zeroes it, loads data from the
++//      executable if this page overlaps code or initData segments,
++//      then marks the page valid.
++//----------------------------------------------------------------------
++
++bool AddrSpace::LoadPage(int vpn) {
++    if (vpn < 0 || (unsigned int)vpn >= numPages)
++        return false;
++    if (pageTable[vpn].valid)
++        return true;  // already loaded
++
++    kernel->addrLock->P();
+ 
+-    if (noffH.initData.size > 0) {
+-        for (i = 0; i < numPages; i++)
+-            executable->ReadAt(
+-                &(kernel->machine->mainMemory[noffH.initData.virtualAddr]) +
+-                    (pageTable[i].physicalPage * PageSize),
+-                PageSize, noffH.initData.inFileAddr + (i * PageSize));
++    int ppn = kernel->gPhysPageBitMap->FindAndSet();
++    if (ppn == -1) {
++        kernel->addrLock->V();
++        DEBUG(dbgAddr, "No free physical pages for vpn " << vpn);
++        return false;
+     }
+ 
++    // zero out the frame
++    bzero(&(kernel->machine->mainMemory[ppn * PageSize]), PageSize);
++
++    // update page table entry
++    pageTable[vpn].physicalPage = ppn;
++    pageTable[vpn].valid        = TRUE;
++    pageTable[vpn].use          = FALSE;
++    pageTable[vpn].dirty        = FALSE;
++
+     kernel->addrLock->V();
+-    delete executable;
+-    return;
++
++    int virtAddr = vpn * PageSize;
++
++    // load from code segment if this page overlaps it
++    if (codeSize > 0) {
++        int codeEnd = codeVirtAddr + codeSize;
++        if (virtAddr < codeEnd && (virtAddr + (int)PageSize) > codeVirtAddr) {
++            int offset   = virtAddr - codeVirtAddr;
++            int memOff   = 0;
++            int fileAddr = codeFileAddr + offset;
++            int copySize = PageSize;
++            if (offset < 0) {
++                memOff    = -offset;
++                fileAddr += memOff;
++                copySize -= memOff;
++            }
++            int remaining = (codeFileAddr + codeSize) - fileAddr;
++            if (copySize > remaining) copySize = remaining;
++            if (copySize > 0)
++                executable->ReadAt(
++                    &(kernel->machine->mainMemory[ppn * PageSize + memOff]),
++                    copySize, fileAddr);
++        }
++    }
++
++    // load from initData segment if this page overlaps it
++    if (initDataSize > 0) {
++        int dataEnd = initDataVirtAddr + initDataSize;
++        if (virtAddr < dataEnd && (virtAddr + (int)PageSize) > initDataVirtAddr) {
++            int offset   = virtAddr - initDataVirtAddr;
++            int memOff   = 0;
++            int fileAddr = initDataFileAddr + offset;
++            int copySize = PageSize;
++            if (offset < 0) {
++                memOff    = -offset;
++                fileAddr += memOff;
++                copySize -= memOff;
++            }
++            int remaining = (initDataFileAddr + initDataSize) - fileAddr;
++            if (copySize > remaining) copySize = remaining;
++            if (copySize > 0)
++                executable->ReadAt(
++                    &(kernel->machine->mainMemory[ppn * PageSize + memOff]),
++                    copySize, fileAddr);
++        }
++    }
++
++    DEBUG(dbgAddr, "Loaded vpn " << vpn << " into ppn " << ppn);
++    return true;
+ }
+ 
+ //----------------------------------------------------------------------
+ // AddrSpace::Execute
+-// 	Run a user program using the current thread
+-//
+-//      The program is assumed to have already been loaded into
+-//      the address space
+-//
+ //----------------------------------------------------------------------
+ 
+ void AddrSpace::Execute() {
+     kernel->currentThread->space = this;
+-
+-    this->InitRegisters();  // set the initial register values
+-    this->RestoreState();   // load page table register
+-
+-    kernel->machine->Run();  // jump to the user progam
+-
+-    ASSERTNOTREACHED();  // machine->Run never returns;
+-                         // the address space exits
+-                         // by doing the syscall "exit"
++    this->InitRegisters();
++    this->RestoreState();
++    kernel->machine->Run();
++    ASSERTNOTREACHED();
+ }
+ 
+ //----------------------------------------------------------------------
+ // AddrSpace::InitRegisters
+-// 	Set the initial values for the user-level register set.
+-//
+-// 	We write these directly into the "machine" registers, so
+-//	that we can immediately jump to user code.  Note that these
+-//	will be saved/restored into the currentThread->userRegisters
+-//	when this thread is context switched out.
+ //----------------------------------------------------------------------
+ 
+ void AddrSpace::InitRegisters() {
+@@ -222,39 +220,20 @@
+ 
+     for (i = 0; i < NumTotalRegs; i++) machine->WriteRegister(i, 0);
+ 
+-    // Initial program counter -- must be location of "Start", which
+-    //  is assumed to be virtual address zero
+     machine->WriteRegister(PCReg, 0);
+-
+-    // Need to also tell MIPS where next instruction is, because
+-    // of branch delay possibility
+-    // Since instructions occupy four bytes each, the next instruction
+-    // after start will be at virtual address four.
+     machine->WriteRegister(NextPCReg, 4);
+-
+-    // Set the stack register to the end of the address space, where we
+-    // allocated the stack; but subtract off a bit, to make sure we don't
+-    // accidentally reference off the end!
+     machine->WriteRegister(StackReg, numPages * PageSize - 16);
+     DEBUG(dbgAddr, "Initializing stack pointer: " << numPages * PageSize - 16);
+ }
+ 
+ //----------------------------------------------------------------------
+ // AddrSpace::SaveState
+-// 	On a context switch, save any machine state, specific
+-//	to this address space, that needs saving.
+-//
+-//	For now, don't need to save anything!
+ //----------------------------------------------------------------------
+ 
+ void AddrSpace::SaveState() {}
+ 
+ //----------------------------------------------------------------------
+ // AddrSpace::RestoreState
+-// 	On a context switch, restore the machine state so that
+-//	this address space can run.
+-//
+-//      For now, tell the machine where to find the page table.
+ //----------------------------------------------------------------------
+ 
+ void AddrSpace::RestoreState() {
+@@ -264,48 +243,39 @@
+ 
+ //----------------------------------------------------------------------
+ // AddrSpace::Translate
+-//  Translate the virtual address in _vaddr_ to a physical address
+-//  and store the physical address in _paddr_.
+-//  The flag _isReadWrite_ is false (0) for read-only access; true (1)
+-//  for read-write access.
+-//  Return any exceptions caused by the address translation.
+ //----------------------------------------------------------------------
++
+ ExceptionType AddrSpace::Translate(unsigned int vaddr, unsigned int *paddr,
+                                    int isReadWrite) {
+     TranslationEntry *pte;
+     int pfn;
+-    unsigned int vpn = vaddr / PageSize;
++    unsigned int vpn    = vaddr / PageSize;
+     unsigned int offset = vaddr % PageSize;
+ 
+-    if (vpn >= numPages) {
++    if (vpn >= numPages)
+         return AddressErrorException;
+-    }
+ 
+     pte = &pageTable[vpn];
+ 
+-    if (isReadWrite && pte->readOnly) {
++    if (!pte->valid)
++        return PageFaultException;   // page not loaded yet — trigger fault handler
++
++    if (isReadWrite && pte->readOnly)
+         return ReadOnlyException;
+-    }
+ 
+     pfn = pte->physicalPage;
+ 
+-    // if the pageFrame is too big, there is something really wrong!
+-    // An invalid translation was loaded into the page table or TLB.
+     if (pfn >= NumPhysPages) {
+         DEBUG(dbgAddr, "Illegal physical page " << pfn);
+         return BusErrorException;
+     }
+ 
+-    pte->use = TRUE;  // set the use, dirty bits
+-
++    pte->use = TRUE;
+     if (isReadWrite) pte->dirty = TRUE;
+ 
+     *paddr = pfn * PageSize + offset;
+ 
+     ASSERT((*paddr < MemorySize));
+ 
+-    // cerr << " -- AddrSpace::Translate(): vaddr: " << vaddr <<
+-    //  ", paddr: " << *paddr << "\n";
+-
+     return NoException;
+-}
++}
+\ No newline at end of file
+diff -ru /home/aditya/nachos-original-backup/code/userprog/addrspace.h /home/aditya/cs23b002oslab/nachos-project-master/code/userprog/addrspace.h
+--- /home/aditya/nachos-original-backup/code/userprog/addrspace.h	2026-04-20 16:01:28.082873163 +0000
++++ /home/aditya/cs23b002oslab/nachos-project-master/code/userprog/addrspace.h	2026-04-20 17:06:10.941612971 +0000
+@@ -1,10 +1,6 @@
+ // addrspace.h
+-//	Data structures to keep track of executing user programs
+-//	(address spaces).
+-//
+-//	For now, we don't keep any information about address spaces.
+-//	The user level CPU state is saved and restored in the thread
+-//	executing the user program (see thread.h).
++//      Data structures to keep track of executing user programs
++//      (address spaces).
+ //
+ // Copyright (c) 1992-1996 The Regents of the University of California.
+ // All rights reserved.  See copyright.h for copyright notice and limitation
+@@ -16,35 +12,29 @@
+ #include "copyright.h"
+ #include "filesys.h"
+ 
+-#define UserStackSize 1024  // increase this as necessary!
++#define UserStackSize 1024
+ 
+ class AddrSpace {
+    public:
+-    AddrSpace();                // Create an address space.
+-    AddrSpace(char *fileName);  // Load a program into addr space from
+-                                // a file
+-    ~AddrSpace();               // De-allocate an address space
+-
+-    void Execute();  // Run a program
+-                     // assumes the program has already
+-                     // been loaded
+-
+-    void SaveState();     // Save/restore address space-specific
+-    void RestoreState();  // info on a context switch
+-
+-    // Translate virtual address _vaddr_
+-    // to physical address _paddr_. _mode_
+-    // is 0 for Read, 1 for Write.
++    AddrSpace();
++    AddrSpace(char *fileName);
++    ~AddrSpace();
++    void Execute();
++    void SaveState();
++    void RestoreState();
+     ExceptionType Translate(unsigned int vaddr, unsigned int *paddr, int mode);
+-    // void InitRegisters();
+-   private:
+-    TranslationEntry *pageTable;  // Assume linear page table translation
+-                                  // for now!
+-    unsigned int numPages;        // Number of pages in the virtual
+-                                  // address space
++    bool LoadPage(int vpn);
+ 
+-    void InitRegisters();  // Initialize user-level CPU registers,
+-                           // before jumping to user code
++   private:
++    TranslationEntry *pageTable;
++    unsigned int numPages;
++    void InitRegisters();
++
++    OpenFile *executable;
++
++    // fields copied from NoffHeader after reading — avoids including noff.h here
++    int codeSize, codeVirtAddr, codeFileAddr;
++    int initDataSize, initDataVirtAddr, initDataFileAddr;
+ };
+ 
+-#endif  // ADDRSPACE_H
++#endif  // ADDRSPACE_H
+\ No newline at end of file
+diff -ru /home/aditya/nachos-original-backup/code/userprog/exception.cc /home/aditya/cs23b002oslab/nachos-project-master/code/userprog/exception.cc
+--- /home/aditya/nachos-original-backup/code/userprog/exception.cc	2026-04-20 16:01:28.092873232 +0000
++++ /home/aditya/cs23b002oslab/nachos-project-master/code/userprog/exception.cc	2026-04-20 17:16:15.621400046 +0000
+@@ -394,6 +394,25 @@
+     return move_program_counter();
+ }
+ 
++void handle_SC_Pipe() {
++    int virtAddr = kernel->machine->ReadRegister(4);  // user pointer to int[2]
++
++    int fd[2];
++    int result = SysPipe(fd);
++
++    if (result == -1) {
++        kernel->machine->WriteRegister(2, -1);
++        return move_program_counter();
++    }
++
++    // write fd[0] and fd[1] back to user memory
++    kernel->machine->WriteMem(virtAddr,     4, fd[0]);
++    kernel->machine->WriteMem(virtAddr + 4, 4, fd[1]);
++
++    kernel->machine->WriteRegister(2, 0);
++    return move_program_counter();
++}
++
+ void ExceptionHandler(ExceptionType which) {
+     int type = kernel->machine->ReadRegister(2);
+ 
+@@ -404,7 +423,15 @@
+             kernel->interrupt->setStatus(SystemMode);
+             DEBUG(dbgSys, "Switch to system mode\n");
+             break;
+-        case PageFaultException:
++        case PageFaultException: {
++            int vpn = kernel->machine->ReadRegister(BadVAddrReg) / PageSize;
++            kernel->stats->numPageFaults++;
++            if (!kernel->currentThread->space->LoadPage(vpn)) {
++                cerr << "Page fault: out of memory at vpn " << vpn << "\n";
++                SysHalt();
++            }
++            return;
++        }
+         case ReadOnlyException:
+         case BusErrorException:
+         case AddressErrorException:
+@@ -495,7 +522,8 @@
+                 case SC_ThreadExit:
+                 case SC_ThreadJoin:
+                     return handle_not_implemented_SC(type);
+-
++                case SC_Pipe:
++                    return handle_SC_Pipe();
+                 default:
+                     cerr << "Unexpected system call " << type << "\n";
+                     break;
+diff -ru /home/aditya/nachos-original-backup/code/userprog/ksyscall.h /home/aditya/cs23b002oslab/nachos-project-master/code/userprog/ksyscall.h
+--- /home/aditya/nachos-original-backup/code/userprog/ksyscall.h	2026-04-20 16:01:28.092873232 +0000
++++ /home/aditya/cs23b002oslab/nachos-project-master/code/userprog/ksyscall.h	2026-04-20 16:23:38.822388063 +0000
+@@ -14,9 +14,11 @@
+ #include "kernel.h"
+ #include "synchconsole.h"
+ #include "ksyscallhelper.h"
++#include "pipe.h"
+ #include <stdlib.h>
+ #include <stdint.h>
+ 
++
+ void SysHalt() { kernel->interrupt->Halt(); }
+ 
+ int SysAdd(int op1, int op2) { return op1 + op2; }
+@@ -170,15 +172,25 @@
+ int SysClose(int id) { return kernel->fileSystem->Close(id); }
+ 
+ int SysRead(char* buffer, int charCount, int fileId) {
+-    if (fileId == 0) {
++    if (fileId == 0)
+         return kernel->synchConsoleIn->GetString(buffer, charCount);
++    if (IS_PIPE_FD(fileId)) {
++        int index = PIPE_INDEX(fileId);
++        if (!IS_PIPE_READ(fileId) || kernel->pipeTable[index] == NULL)
++            return -1;
++        return kernel->pipeTable[index]->Read(buffer, charCount);
+     }
+     return kernel->fileSystem->Read(buffer, charCount, fileId);
+ }
+ 
+ int SysWrite(char* buffer, int charCount, int fileId) {
+-    if (fileId == 1) {
++    if (fileId == 1)
+         return kernel->synchConsoleOut->PutString(buffer, charCount);
++    if (IS_PIPE_FD(fileId)) {
++        int index = PIPE_INDEX(fileId);
++        if (IS_PIPE_READ(fileId) || kernel->pipeTable[index] == NULL)
++            return -1;
++        return kernel->pipeTable[index]->Write(buffer, charCount);
+     }
+     return kernel->fileSystem->Write(buffer, charCount, fileId);
+ }
+@@ -247,4 +259,13 @@
+ 
+ int SysGetPid() { return kernel->currentThread->processID; }
+ 
++int SysPipe(int* fd) {
++    int index = kernel->CreatePipe();
++    if (index == -1) return -1;
++
++    fd[0] = PIPE_FD_BASE + 2 * index;      // read end
++    fd[1] = PIPE_FD_BASE + 2 * index + 1;  // write end
++    return 0;
++}
++
+ #endif /* ! __USERPROG_KSYSCALL_H__ */
+diff -ru /home/aditya/nachos-original-backup/code/userprog/syscall.h /home/aditya/cs23b002oslab/nachos-project-master/code/userprog/syscall.h
+--- /home/aditya/nachos-original-backup/code/userprog/syscall.h	2026-04-20 16:01:28.092873232 +0000
++++ /home/aditya/cs23b002oslab/nachos-project-master/code/userprog/syscall.h	2026-04-20 16:19:05.012486809 +0000
+@@ -50,7 +50,7 @@
+ #define SC_GetPid 54
+ #define SC_Abs 55
+ #define SC_Sleep 56
+-
++#define SC_Pipe 57
+ 
+ 
+ #ifndef IN_ASM
+@@ -215,7 +215,7 @@
+ void ThreadExit(int ExitCode);
+ int Abs(int number);
+ void Sleep(int seconds);
+-
++int Pipe(int* fd);
+ #endif /* IN_ASM */
+ 
+ #endif /* SYSCALL_H */

@@ -1,10 +1,6 @@
 // addrspace.h
-//	Data structures to keep track of executing user programs
-//	(address spaces).
-//
-//	For now, we don't keep any information about address spaces.
-//	The user level CPU state is saved and restored in the thread
-//	executing the user program (see thread.h).
+//      Data structures to keep track of executing user programs
+//      (address spaces).
 //
 // Copyright (c) 1992-1996 The Regents of the University of California.
 // All rights reserved.  See copyright.h for copyright notice and limitation
@@ -16,35 +12,29 @@
 #include "copyright.h"
 #include "filesys.h"
 
-#define UserStackSize 1024  // increase this as necessary!
+#define UserStackSize 1024
 
 class AddrSpace {
    public:
-    AddrSpace();                // Create an address space.
-    AddrSpace(char *fileName);  // Load a program into addr space from
-                                // a file
-    ~AddrSpace();               // De-allocate an address space
-
-    void Execute();  // Run a program
-                     // assumes the program has already
-                     // been loaded
-
-    void SaveState();     // Save/restore address space-specific
-    void RestoreState();  // info on a context switch
-
-    // Translate virtual address _vaddr_
-    // to physical address _paddr_. _mode_
-    // is 0 for Read, 1 for Write.
+    AddrSpace();
+    AddrSpace(char *fileName);
+    ~AddrSpace();
+    void Execute();
+    void SaveState();
+    void RestoreState();
     ExceptionType Translate(unsigned int vaddr, unsigned int *paddr, int mode);
-    // void InitRegisters();
-   private:
-    TranslationEntry *pageTable;  // Assume linear page table translation
-                                  // for now!
-    unsigned int numPages;        // Number of pages in the virtual
-                                  // address space
+    bool LoadPage(int vpn);
 
-    void InitRegisters();  // Initialize user-level CPU registers,
-                           // before jumping to user code
+   private:
+    TranslationEntry *pageTable;
+    unsigned int numPages;
+    void InitRegisters();
+
+    OpenFile *executable;
+
+    // fields copied from NoffHeader after reading — avoids including noff.h here
+    int codeSize, codeVirtAddr, codeFileAddr;
+    int initDataSize, initDataVirtAddr, initDataFileAddr;
 };
 
 #endif  // ADDRSPACE_H

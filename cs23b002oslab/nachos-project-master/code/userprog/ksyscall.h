@@ -14,8 +14,10 @@
 #include "kernel.h"
 #include "synchconsole.h"
 #include "ksyscallhelper.h"
+#include "pipe.h"
 #include <stdlib.h>
 #include <stdint.h>
+
 
 void SysHalt() { kernel->interrupt->Halt(); }
 
@@ -170,15 +172,25 @@ int SysOpen(char* fileName, int type) {
 int SysClose(int id) { return kernel->fileSystem->Close(id); }
 
 int SysRead(char* buffer, int charCount, int fileId) {
-    if (fileId == 0) {
+    if (fileId == 0)
         return kernel->synchConsoleIn->GetString(buffer, charCount);
+    if (IS_PIPE_FD(fileId)) {
+        int index = PIPE_INDEX(fileId);
+        if (!IS_PIPE_READ(fileId) || kernel->pipeTable[index] == NULL)
+            return -1;
+        return kernel->pipeTable[index]->Read(buffer, charCount);
     }
     return kernel->fileSystem->Read(buffer, charCount, fileId);
 }
 
 int SysWrite(char* buffer, int charCount, int fileId) {
-    if (fileId == 1) {
+    if (fileId == 1)
         return kernel->synchConsoleOut->PutString(buffer, charCount);
+    if (IS_PIPE_FD(fileId)) {
+        int index = PIPE_INDEX(fileId);
+        if (IS_PIPE_READ(fileId) || kernel->pipeTable[index] == NULL)
+            return -1;
+        return kernel->pipeTable[index]->Write(buffer, charCount);
     }
     return kernel->fileSystem->Write(buffer, charCount, fileId);
 }
@@ -246,5 +258,14 @@ int SysSignal(char* name) {
 }
 
 int SysGetPid() { return kernel->currentThread->processID; }
+
+int SysPipe(int* fd) {
+    int index = kernel->CreatePipe();
+    if (index == -1) return -1;
+
+    fd[0] = PIPE_FD_BASE + 2 * index;      // read end
+    fd[1] = PIPE_FD_BASE + 2 * index + 1;  // write end
+    return 0;
+}
 
 #endif /* ! __USERPROG_KSYSCALL_H__ */

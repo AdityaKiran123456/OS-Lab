@@ -50,7 +50,7 @@
 #define SC_GetPid 54
 #define SC_Abs 55
 #define SC_Sleep 56
-
+#define SC_Pipe 57
 
 
 #ifndef IN_ASM
@@ -215,7 +215,7 @@ int ThreadJoin(ThreadId id);
 void ThreadExit(int ExitCode);
 int Abs(int number);
 void Sleep(int seconds);
-
+int Pipe(int* fd);
 #endif /* IN_ASM */
 
 #endif /* SYSCALL_H */

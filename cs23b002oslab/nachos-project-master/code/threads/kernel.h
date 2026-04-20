@@ -18,6 +18,7 @@
 #include "alarm.h"
 #include "filesys.h"
 #include "machine.h"
+      
 
 class PostOfficeInput;
 class PostOfficeOutput;
@@ -25,6 +26,12 @@ class SynchConsoleInput;
 class SynchConsoleOutput;
 class SynchDisk;
 class Semaphore;
+#define MAX_PIPES 10
+#define PIPE_FD_BASE 10
+#define IS_PIPE_FD(fd)   ((fd) >= PIPE_FD_BASE)
+#define PIPE_INDEX(fd)   (((fd) - PIPE_FD_BASE) / 2)
+#define IS_PIPE_READ(fd) (((fd) - PIPE_FD_BASE) % 2 == 0)
+class Pipe;
 #include "bitmap.h"
 #include "stable.h"
 #include "ptable.h"
@@ -67,6 +74,9 @@ class Kernel {
     Bitmap *gPhysPageBitMap;
     STable *semTab;
     PTable *pTab;
+
+    Pipe* pipeTable[MAX_PIPES];
+    int   CreatePipe();
 
     int hostName;  // machine identifier
 
