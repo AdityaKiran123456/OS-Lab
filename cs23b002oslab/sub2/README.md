@@ -8,7 +8,7 @@
 ### 1. Pipe System Call (SC_Pipe) - Syscall #57
 **syscall.h:** `#define SC_Pipe 57` and `int Pipe(int* fd);`
 
-**pipe.h / pipe.cc:** New `Pipe` class with a 256-byte circular buffer, a `Lock` for mutual exclusion, and two semaphores — `notEmpty` (starts at 0, reader blocks here) and `notFull` (starts at 256, writer blocks here).
+**pipe.h / pipe.cc:** New `Pipe` class with a 256-byte circular buffer, a `Lock` for mutual exclusion, and two semaphores `notEmpty` (starts at 0, reader blocks here) and `notFull` (starts at 256, writer blocks here).
 
 **kernel.h / kernel.cc:** Added `Pipe* pipeTable[MAX_PIPES]` and `CreatePipe()` to the kernel. Pipe table initialized in `Kernel::Initialize()`.
 
@@ -25,7 +25,7 @@
 ### 2. Demand Paging
 **addrspace.h:** Added `OpenFile* executable`, segment info fields (`codeSize`, `codeVirtAddr`, `codeFileAddr`, `initDataSize`, `initDataVirtAddr`, `initDataFileAddr`), and `bool LoadPage(int vpn)`.
 
-**addrspace.cc:** Constructor sets all page table entries to `valid = FALSE` and `physicalPage = -1` — no physical memory allocated at load time. Executable file kept open for use by `LoadPage`. `LoadPage(vpn)` allocates a physical frame on demand, zeroes it, loads the correct data from the executable if the page overlaps the code or initData segments, then marks the page valid.
+**addrspace.cc:** Constructor sets all page table entries to `valid = FALSE` and `physicalPage = -1` no physical memory allocated at load time. Executable file kept open for use by `LoadPage`. `LoadPage(vpn)` allocates a physical frame on demand, zeroes it, loads the correct data from the executable if the page overlaps the code or initData segments, then marks the page valid.
 
 **exception.cc:** `PageFaultException` pulled out of the fatal error group. Handler reads the faulting address from `BadVAddrReg`, computes the vpn, calls `LoadPage(vpn)`, and increments `kernel->stats->numPageFaults`.
 
